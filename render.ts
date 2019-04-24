@@ -55,12 +55,13 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
         for(let col = tileEnv.minX; col <= tileEnv.maxX; col++){
             if(!backgroundImages[row][col]) {
                 backgroundImages[row][col] = new Image();
-                backgroundImages[row][col].src = `https://map2.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`
+                const idx = col % 4;
+                backgroundImages[row][col].src = `https://map${idx}.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`
                 //console.log(`load https://map2.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`)
             }
         }
     }
-    console.log(`zoom=${zoom}, level=${level}, ratio=${RATIO}, mapUnit=${TILE_MAP_UNIT}, pixelUnit=${TILE_PIXEL_UNIT}, mapEnv=${JSON.stringify(mapEnv)}, tileEnv=${JSON.stringify(tileEnv)}`);
+    //console.log(`zoom=${zoom}, level=${level}, ratio=${RATIO}, mapUnit=${TILE_MAP_UNIT}, pixelUnit=${TILE_PIXEL_UNIT}, mapEnv=${JSON.stringify(mapEnv)}, tileEnv=${JSON.stringify(tileEnv)}`);
         
     ctx.save();
     ctx.scale(devicePixelRatio, devicePixelRatio);
