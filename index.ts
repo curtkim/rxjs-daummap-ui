@@ -25,9 +25,9 @@ const zoom$ = fromEvent(document, 'keyup').pipe(
     map(key => {
         switch(key) {
             case 'Equal':
-                return {dz:-1};
+                return {zoom:-1};
             case 'Minus':
-                return {dz:1};
+                return {zoom:1};
             default:
                 return undefined;
         }
@@ -45,7 +45,10 @@ function applyDelta([center, zoom], delta: any) {
     const dy = delta.dy || 0;
     const dz = delta.dz || 0;
     const ratio = Math.pow(2, zoom - 3);
-    return [{x: center.x - dx * ratio, y: center.y + dy * ratio}, zoom+dz];
+    let newZoom = zoom + dz;
+    if( delta.zoom)
+        newZoom = Math.round(newZoom + delta.zoom);
+    return [{x: center.x - dx * ratio, y: center.y + dy * ratio}, newZoom];
 }
 
 merge(mousedrag$, zoom$, wheel$).pipe(
