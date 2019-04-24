@@ -20,7 +20,7 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
 
     const mapEnv = createEnvelope(center, zoom, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    const level = zoom;
+    const level = Math.round(zoom);
     const RATIO = Math.pow(2, zoom - 3);
     const UNIT = RATIO * TILE_SIZE;
     
@@ -43,6 +43,7 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
     const tileLeftPx = map2pixelX(tile2mapX(COL_OFFSET));
     const tileBottomPx = map2pixelY(tile2mapY(ROW_OFFSET));
 
+    // cache image
     for(let row = ROW_OFFSET; row <= ROW_OFFSET + ROW_SIZE; row++){
         if(!backgroundImages[row])
             backgroundImages[row] = new Array();
@@ -55,6 +56,7 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
             }
         }
     }
+    //console.log(zoom, RATIO, UNIT, mapEnv);
         
     ctx.save();
     ctx.scale(devicePixelRatio, devicePixelRatio);
