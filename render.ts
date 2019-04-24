@@ -15,8 +15,8 @@ let backgroundImages = [];
 
 export function render(center: Coordinate, zoom: number, devicePixelRatio: number, ctx: CanvasRenderingContext2D) {
 
-    const WINDOW_WIDTH = window.innerWidth;
-    const WINDOW_HEIGHT = window.innerHeight;    
+    const WINDOW_WIDTH = ctx.canvas.clientWidth;
+    const WINDOW_HEIGHT = ctx.canvas.clientHeight;
 
     const mapEnv = createEnvelope(center, zoom, WINDOW_WIDTH, WINDOW_HEIGHT);
 
