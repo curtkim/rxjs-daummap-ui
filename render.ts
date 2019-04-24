@@ -21,8 +21,9 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
     const mapEnv = createEnvelope(center, zoom, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     const level = Math.round(zoom);
-    const RATIO = Math.pow(2, zoom - 3);
-    const UNIT = RATIO * TILE_SIZE;
+    const RATIO = Math.pow(2, zoom - 3);                             // 1px이 몇m인가?
+    const TILE_MAP_UNIT = Math.pow(2, level-3) * TILE_SIZE;          // 타일의 폭은 몇m인가?
+    const TILE_PIXEL_UNIT = Math.pow(2, level - zoom) * TILE_SIZE;   // 타일의 pixel상 크기
     
     function map2pixelX(x: number): number {
         return (x - mapEnv.minX) / RATIO;
@@ -31,42 +32,45 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
         return WINDOW_HEIGHT - (y - mapEnv.minY) / RATIO;
     };
 
-    const map2tileX = (x:number)=> Math.floor((x+30000) / UNIT)
-    const map2tileY = (x:number)=> Math.floor((x+60000) / UNIT)
-    const tile2mapX = (x:number)=> x*UNIT-30000
-    const tile2mapY = (y:number)=> y*UNIT-60000
-    const COL_OFFSET = map2tileX(mapEnv.minX)
-    const ROW_OFFSET = map2tileY(mapEnv.minY)
-    const COL_SIZE = Math.ceil(WINDOW_WIDTH / TILE_SIZE)
-    const ROW_SIZE = Math.ceil(WINDOW_HEIGHT / TILE_SIZE)
+    const map2tileX = (x:number)=> Math.floor((x+30000) / TILE_MAP_UNIT)
+    const map2tileY = (x:number)=> Math.floor((x+60000) / TILE_MAP_UNIT)
+    const tile2mapX = (x:number)=> x*TILE_MAP_UNIT-30000
+    const tile2mapY = (y:number)=> y*TILE_MAP_UNIT-60000
 
-    const tileLeftPx = map2pixelX(tile2mapX(COL_OFFSET));
-    const tileBottomPx = map2pixelY(tile2mapY(ROW_OFFSET));
+    const tileEnv : Envelope = {
+        minX: map2tileX(mapEnv.minX),
+        minY: map2tileY(mapEnv.minY),
+        maxX: map2tileX(mapEnv.maxX),
+        maxY: map2tileY(mapEnv.maxY),
+    };
+
+    const tileLeftPx = map2pixelX(tile2mapX(tileEnv.minX));
+    const tileBottomPx = map2pixelY(tile2mapY(tileEnv.minY));
 
     // cache image
-    for(let row = ROW_OFFSET; row <= ROW_OFFSET + ROW_SIZE; row++){
+    for(let row = tileEnv.minY; row <= tileEnv.maxY; row++){
         if(!backgroundImages[row])
             backgroundImages[row] = new Array();
 
-        for(let col = COL_OFFSET; col <= COL_OFFSET + COL_SIZE; col++){
+        for(let col = tileEnv.minX; col <= tileEnv.maxX; col++){
             if(!backgroundImages[row][col]) {
                 backgroundImages[row][col] = new Image();
                 backgroundImages[row][col].src = `https://map2.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`
-                console.log(`load https://map2.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`)
+                //console.log(`load https://map2.daumcdn.net/map_2d_hd/1902usc/L${level}/${row}/${col}.png`)
             }
         }
     }
-    //console.log(zoom, RATIO, UNIT, mapEnv);
+    console.log(`zoom=${zoom}, level=${level}, ratio=${RATIO}, mapUnit=${TILE_MAP_UNIT}, pixelUnit=${TILE_PIXEL_UNIT}, mapEnv=${JSON.stringify(mapEnv)}, tileEnv=${JSON.stringify(tileEnv)}`);
         
     ctx.save();
     ctx.scale(devicePixelRatio, devicePixelRatio);
 
-    for(let row = ROW_OFFSET; row <= ROW_OFFSET + ROW_SIZE; row++){
-        for(let col = COL_OFFSET; col <= COL_OFFSET + COL_SIZE; col++){
-            const x = (col - COL_OFFSET)*TILE_SIZE+ tileLeftPx;
-            const y = tileBottomPx - (row - ROW_OFFSET +1)*TILE_SIZE;
+    for(let row = tileEnv.minY; row <= tileEnv.maxY; row++){
+        for(let col = tileEnv.minX; col <= tileEnv.maxX; col++){
+            const x = (col - tileEnv.minX)*TILE_PIXEL_UNIT+ tileLeftPx;
+            const y = tileBottomPx - (row - tileEnv.minY +1)*TILE_PIXEL_UNIT;
             const image = new Image();
-            ctx.drawImage(backgroundImages[row][col], x, y, TILE_SIZE, TILE_SIZE);
+            ctx.drawImage(backgroundImages[row][col], x, y, TILE_PIXEL_UNIT, TILE_PIXEL_UNIT);
         }
     }
 

@@ -44,7 +44,7 @@ function applyDelta([center, zoom], delta: any) {
 }
 
 merge(mousedrag$, zoom$).pipe(
-    scan(applyDelta, [{x: 202443, y: 444249}, 4]),
+    scan(applyDelta, [{x: 202443, y: 444249}, 3.4]),
     tap(([center, zoom]) => {
         render(center, zoom, devicePixelRatio, ctx);
     })
