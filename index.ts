@@ -35,6 +35,11 @@ const zoom$ = fromEvent(document, 'keyup').pipe(
     filter(delta => delta != undefined)
 );
 
+const wheel$ = fromEvent(document, 'wheel').pipe(
+    tap((wheelEvent : WheelEvent) => {wheelEvent.stopImmediatePropagation()}),
+    map((wheelEvent : WheelEvent) => {return {dz: wheelEvent.deltaY*0.05};})
+);
+
 function applyDelta([center, zoom], delta: any) {
     const dx = delta.dx || 0;
     const dy = delta.dy || 0;
@@ -43,10 +48,11 @@ function applyDelta([center, zoom], delta: any) {
     return [{x: center.x - dx * ratio, y: center.y + dy * ratio}, zoom+dz];
 }
 
-merge(mousedrag$, zoom$).pipe(
+merge(mousedrag$, zoom$, wheel$).pipe(
     scan(applyDelta, [{x: 202443, y: 444249}, 4]),
     tap(([center, zoom]) => {
         render(center, zoom, devicePixelRatio, ctx);
     })
 ).subscribe();
 
+//fromEvent(document, 'click').subscribe(console.log)

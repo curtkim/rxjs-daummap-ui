@@ -61,7 +61,7 @@ export function render(center: Coordinate, zoom: number, devicePixelRatio: numbe
             }
         }
     }
-    //console.log(`zoom=${zoom}, level=${level}, ratio=${RATIO}, mapUnit=${TILE_MAP_UNIT}, pixelUnit=${TILE_PIXEL_UNIT}, mapEnv=${JSON.stringify(mapEnv)}, tileEnv=${JSON.stringify(tileEnv)}`);
+    console.log(`zoom=${zoom}, level=${level}, devicePixelRatio=${devicePixelRatio}, ratio=${RATIO}, mapUnit=${TILE_MAP_UNIT}, pixelUnit=${TILE_PIXEL_UNIT}, mapEnv=${JSON.stringify(mapEnv)}, tileEnv=${JSON.stringify(tileEnv)}`);
         
     ctx.save();
     ctx.scale(devicePixelRatio, devicePixelRatio);
