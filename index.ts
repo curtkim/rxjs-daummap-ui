@@ -6,11 +6,10 @@ import {Coordinate, Envelope} from './envelope';
 import {Map} from './render';
 
 function render(center: Coordinate, zoom: number, devicePixelRatio: number, ctx: CanvasRenderingContext2D) {
-    const map = new Map(center, zoom, devicePixelRatio, ctx);
-
     ctx.save();
     ctx.scale(devicePixelRatio, devicePixelRatio);
 
+    const map = new Map(center, zoom, devicePixelRatio, ctx);
     map.drawBackground();
 
     ctx.restore();
