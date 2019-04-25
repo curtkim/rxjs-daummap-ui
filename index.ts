@@ -2,8 +2,19 @@ import { fromEvent, merge } from 'rxjs';
 import {map, scan, tap, pluck, filter} from 'rxjs/operators';
 import {createMouseDragObserable} from './interaction';
 import {Coordinate, Envelope} from './envelope';
-import {render} from './render';
+//import {render} from './render';
+import {Map} from './render';
 
+function render(center: Coordinate, zoom: number, devicePixelRatio: number, ctx: CanvasRenderingContext2D) {
+    const map = new Map(center, zoom, devicePixelRatio, ctx);
+
+    ctx.save();
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    map.drawBackground();
+
+    ctx.restore();
+}
 
 function getCanvas(w: number, h: number, devicePixelRatio: number) {
     const c = document.createElement('canvas')
