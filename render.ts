@@ -21,6 +21,7 @@ export class Map {
     devicePixelRatio: number;
 
     mapEnv: Envelope;
+    ratio: number;          // 1px이 몇m인가?
 
     constructor(center: Coordinate, zoom: number, devicePixelRatio: number, ctx: CanvasRenderingContext2D) {
         this.center = center;
@@ -28,36 +29,22 @@ export class Map {
         this.devicePixelRatio = devicePixelRatio;
         this.ctx = ctx;     
         
-        this._updateMapEnv();
+        this.ratio = Math.pow(2, this.zoom - 3);
+        this.mapEnv = createEnvelope(this.center, this.zoom, this._windowWidth(), this._windowHeight());
     }
-
-    setCenter(pt : Coordinate) {
-        this.center = pt;
-        this._updateMapEnv();
-    };
-    setZoom(zoom: number){
-        this.zoom = zoom;
-        this._updateMapEnv();
-    }
-    _updateMapEnv() {
-        this.mapEnv = createEnvelope(this.center, this.zoom, this.windowWidth(), this.windowHeight());
-    }
-
-    // 1px이 몇m인가?
-    ratio(): number {
-        return Math.pow(2, this.zoom - 3);
-    }
-    windowWidth(): number {
+    
+    _windowWidth(): number {
         return this.ctx.canvas.clientWidth;
     }
-    windowHeight(): number {
+    _windowHeight(): number {
         return this.ctx.canvas.clientHeight;
     }
+
     map2pixelX(x: number): number {
-        return (x - this.mapEnv.minX) / this.ratio();
+        return (x - this.mapEnv.minX) / this.ratio;
     };
     map2pixelY(y: number): number {
-        return this.windowHeight() - (y - this.mapEnv.minY) / this.ratio();
+        return this._windowHeight() - (y - this.mapEnv.minY) / this.ratio;
     };
 
     drawBackground() {
