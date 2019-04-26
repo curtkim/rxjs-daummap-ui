@@ -22,8 +22,8 @@ export class Map {
         
         this.ratio = Math.pow(2, this.zoom - 3);
         
-        const mapWidth = ctx.canvas.clientWidth * this.ratio;
-        const mapHegith = ctx.canvas.clientHeight * this.ratio;    
+        const mapWidth = this._windowWidth() * this.ratio;
+        const mapHegith = this._windowHeight() * this.ratio;    
         this.mapEnv = { minX: center.x - mapWidth / 2, minY: center.y - mapHegith / 2, maxX: center.x + mapWidth / 2, maxY: center.y + mapHegith / 2 };
     }
     
