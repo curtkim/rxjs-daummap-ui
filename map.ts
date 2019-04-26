@@ -2,15 +2,6 @@ import {Coordinate, Envelope} from './envelope';
 
 const TILE_SIZE = 256;
 
-function createEnvelope(center: Coordinate, zoom: number, windowWidth: number, windowHeight: number): Envelope {
-    const ratio = Math.pow(2, zoom - 3);
-
-    const width = windowWidth * ratio;
-    const hegith = windowHeight * ratio;
-
-    return { minX: center.x - width / 2, minY: center.y - hegith / 2, maxX: center.x + width / 2, maxY: center.y + hegith / 2 };
-}
-
 const backgroundImages = [];
 
 export class Map {
@@ -30,7 +21,10 @@ export class Map {
         this.ctx = ctx;     
         
         this.ratio = Math.pow(2, this.zoom - 3);
-        this.mapEnv = createEnvelope(this.center, this.zoom, this._windowWidth(), this._windowHeight());
+        
+        const mapWidth = ctx.canvas.clientWidth * this.ratio;
+        const mapHegith = ctx.canvas.clientHeight * this.ratio;    
+        this.mapEnv = { minX: center.x - mapWidth / 2, minY: center.y - mapHegith / 2, maxX: center.x + mapWidth / 2, maxY: center.y + mapHegith / 2 };
     }
     
     _windowWidth(): number {

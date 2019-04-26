@@ -3,7 +3,7 @@ import {map, scan, tap, pluck, filter} from 'rxjs/operators';
 import {createMouseDragObserable} from './interaction';
 import {Coordinate, Envelope} from './envelope';
 //import {render} from './render';
-import {Map} from './render';
+import {Map} from './map';
 
 function render(center: Coordinate, zoom: number, devicePixelRatio: number, ctx: CanvasRenderingContext2D) {
     ctx.save();
